@@ -1,10 +1,8 @@
 package com.addcel.bill.pocket.BillPocket.bean;
 
-public class ResponseAuthorization {
+public class ResponseAuthorization extends BaseResponse{
 
     private Integer status;
-
-    private String message;
 
     private Integer opId;
 
@@ -12,7 +10,7 @@ public class ResponseAuthorization {
 
     private String authNumber;
 
-    private String ticketURL;
+    private String ticketUrl;
 
     private double amount;
 
@@ -26,14 +24,6 @@ public class ResponseAuthorization {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public Integer getOpId() {
@@ -60,12 +50,12 @@ public class ResponseAuthorization {
         this.authNumber = authNumber;
     }
 
-    public String getTicketURL() {
-        return ticketURL;
+    public String getTicketUrl() {
+        return ticketUrl;
     }
 
-    public void setTicketURL(String ticketURL) {
-        this.ticketURL = ticketURL;
+    public void setTicketUrl(String ticketUrl) {
+        this.ticketUrl = ticketUrl;
     }
 
     public double getAmount() {

@@ -1,9 +1,6 @@
 package com.addcel.bill.pocket.BillPocket.bean;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties
-public class Authorization {
+public class RequestAmexAuthorization {
 
     private String apiKey;
 
@@ -12,10 +9,6 @@ public class Authorization {
     private double amount;
 
     private String txnType;
-
-    private String contractNumber;
-
-    private int paymentPlan;
 
     private String amexCustPostalCode;
 
@@ -43,25 +36,6 @@ public class Authorization {
 
     private String amexCallTypId;
 
-    private long idBitacora;
-
-    private String pan;
-
-    private String cvv2;
-
-    private String expDate;
-
-    private boolean amex;
-
-    private long idTransaccion;
-
-    public long getIdTransaccion() {
-        return idTransaccion;
-    }
-
-    public void setIdTransaccion(long idTransaccion) {
-        this.idTransaccion = idTransaccion;
-    }
 
     public String getApiKey() {
         return apiKey;
@@ -93,22 +67,6 @@ public class Authorization {
 
     public void setTxnType(String txnType) {
         this.txnType = txnType;
-    }
-
-    public String getContractNumber() {
-        return contractNumber;
-    }
-
-    public void setContractNumber(String contractNumber) {
-        this.contractNumber = contractNumber;
-    }
-
-    public int getPaymentPlan() {
-        return paymentPlan;
-    }
-
-    public void setPaymentPlan(int paymentPlan) {
-        this.paymentPlan = paymentPlan;
     }
 
     public String getAmexCustPostalCode() {
@@ -213,45 +171,5 @@ public class Authorization {
 
     public void setAmexCallTypId(String amexCallTypId) {
         this.amexCallTypId = amexCallTypId;
-    }
-
-    public long getIdBitacora() {
-        return idBitacora;
-    }
-
-    public void setIdBitacora(long idBitacora) {
-        this.idBitacora = idBitacora;
-    }
-
-    public String getPan() {
-        return pan;
-    }
-
-    public void setPan(String pan) {
-        this.pan = pan;
-    }
-
-    public String getCvv2() {
-        return cvv2;
-    }
-
-    public void setCvv2(String cvv2) {
-        this.cvv2 = cvv2;
-    }
-
-    public String getExpDate() {
-        return expDate;
-    }
-
-    public void setExpDate(String expDate) {
-        this.expDate = expDate;
-    }
-
-    public boolean isAmex() {
-        return amex;
-    }
-
-    public void setAmex(boolean amex) {
-        this.amex = amex;
     }
 }

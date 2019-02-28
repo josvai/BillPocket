@@ -6,14 +6,14 @@ import com.addcel.bill.pocket.BillPocket.bean.TransactionRequest;
 
 public interface PaymentService {
 
-    ResponseEnrollmentCard cardTokenization(Integer idApp, Integer idPais, String idioma,long idUsuario, int idTarjeta);
+    ResponseEnrollmentCard cardTokenization(Integer idApp, Integer idPais, String idioma,long idUsuario, Integer idTarjeta);
 
-    String cardTokenValidation(int idTarjeta);
+    String cardTokenValidation(Integer idTarjeta);
 
-    ResponseAuthorization authorization(Integer idApp, Integer idPais, String idioma, long idUsuario, int idTarjeta, TransactionRequest transaction);
+    ResponseAuthorization authorization(Integer idApp, Integer idPais, String idioma, TransactionRequest transaction);
 
-    String refund(int idTransaccion);
+    ResponseAuthorization refund(Integer idApp, Integer idPais, String idioma, long idTransaccion);
 
-    String checkTransaction(int idTransaccion);
+    ResponseAuthorization checkTransaction(Integer idApp, Integer idPais, String idioma, Integer idTransaccion);
 
 }
