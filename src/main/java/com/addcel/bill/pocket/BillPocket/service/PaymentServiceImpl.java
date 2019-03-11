@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -95,44 +94,52 @@ public class PaymentServiceImpl  implements PaymentService{
                     LOGGER.info("RESPUESTA DE ACTUALIZACION DE BD - {}", callTransaccion);
                     actualizaTran = GSON.fromJson(callTransaccion, BaseResponse.class);
                 } else {
-                    LOGGER.info("TARJETA NO TOKENIZADA - SOLICITANDO TOKENIZACION - {}", GSON.toJson(authorization));
-                    enrollmentCard = billPocketClient.enrollCard(authorization.getPan(), authorization.getExpDate(),
-                            authorization.getCvv2(), "");
-                    LOGGER.info("RESPUESTA DE TOKENIZACION DE TARJETA - {}", GSON.toJson(enrollmentCard));
-                    if(CODE_SUCESS_BP.equals(enrollmentCard.getCode())){
-                        LOGGER.info("INSERTANDO TRANSACCION - ID USUARIO - {}", transaction.getIdUsuario());
-                        callTransaccion = authorizationRepository.insertatransaccion_billpocket(String.valueOf(transaction.getIdUsuario()),
-                                idApp, transaction.getIdioma(), transaction.getIdProveedor(), 9, transaction.getIdProducto(),
-                                transaction.getConcepto(), transaction.getReferencia(), transaction.getCargo(),
-                                transaction.getComision(), transaction.getIdTarjeta(),transaction.getTipoTarjeta(),
-                                transaction.getImei(), transaction.getSoftware(),transaction.getModelo(),
-                                transaction.getLat(), transaction.getLon(),
-                                enrollmentCard.getCardToken(), enrollmentCard.getMaskedPan());
-                        LOGGER.info("RESPUESTA DE DB: {}", callTransaccion);
-                        if(callTransaccion != null){
-                            authorization.setCardToken(enrollmentCard.getCardToken());
-                            LOGGER.info("DATOS DE TRANSACCION - {} - CARDTOKEN - {}", GSON.toJson(transaction),
-                                    enrollmentCard.getCardToken()+" MASKED CARD -"+ enrollmentCard.getMaskedPan());
-                            authorization = GSON.fromJson(callTransaccion, Authorization.class);
-                            response = billPocketClient.authorizationRequest(authorization);
-                            LOGGER.info("ACTUALIZA TRANSACION PARAMS - " +
-                                    " ID TRANSACCION: "+authorization.getIdTransaccion()+
-                                    " MESSAGE: "+response.getMessage()+
-                                    " OPID: "+response.getOpId()+
-                                    " TXNISOCODE: "+response.getTxnISOCode()+
-                                    " AUTH NUMBER: "+response.getAuthNumber()+
-                                    " TICKET: "+response.getTicketUrl()+
-                                    " MASKED PAN: "+response.getMaskedPAN());
-                            authorizationRepository.actualizatransaccion_billpocket(authorization.getIdTransaccion(),
-                                    response.getStatus(), response.getMessage(), response.getOpId(),
-                                    response.getAuthNumber(), response.getTxnISOCode(),
-                                    response.getTicketUrl(), response.getMaskedPAN());
-                            LOGGER.info("RESPUESTA DE ACTUALIZACION DE BD - {}", callTransaccion);
-                            actualizaTran = GSON.fromJson(callTransaccion, BaseResponse.class);
+                    if(authorization.getCode() == 0){
+                        LOGGER.info("TARJETA NO TOKENIZADA - SOLICITANDO TOKENIZACION - {}", GSON.toJson(authorization));
+                        enrollmentCard = billPocketClient.enrollCard(authorization.getPan(), authorization.getExpDate(),
+                                authorization.getCvv2(), "");
+                        LOGGER.info("RESPUESTA DE TOKENIZACION DE TARJETA - {}", GSON.toJson(enrollmentCard));
+                        if(CODE_SUCESS_BP == enrollmentCard.getCode()){
+                            LOGGER.info("INSERTANDO TRANSACCION - ID USUARIO - {}", transaction.getIdUsuario());
+                            callTransaccion = authorizationRepository.insertatransaccion_billpocket(String.valueOf(transaction.getIdUsuario()),
+                                    idApp, transaction.getIdioma(), transaction.getIdProveedor(), 9, transaction.getIdProducto(),
+                                    transaction.getConcepto(), transaction.getReferencia(), transaction.getCargo(),
+                                    transaction.getComision(), transaction.getIdTarjeta(),transaction.getTipoTarjeta(),
+                                    transaction.getImei(), transaction.getSoftware(),transaction.getModelo(),
+                                    transaction.getLat(), transaction.getLon(),
+                                    enrollmentCard.getCardToken(), enrollmentCard.getMaskedPan());
+                            LOGGER.info("RESPUESTA DE DB: {}", callTransaccion);
+                            if(callTransaccion != null){
+                                authorization.setCardToken(enrollmentCard.getCardToken());
+                                LOGGER.info("DATOS DE TRANSACCION - {} - CARDTOKEN - {}", GSON.toJson(transaction),
+                                        enrollmentCard.getCardToken()+" MASKED CARD -"+ enrollmentCard.getMaskedPan());
+                                authorization = GSON.fromJson(callTransaccion, Authorization.class);
+                                response = billPocketClient.authorizationRequest(authorization);
+                                LOGGER.info("ACTUALIZA TRANSACION PARAMS - " +
+                                        " ID TRANSACCION: "+authorization.getIdTransaccion()+
+                                        " MESSAGE: "+response.getMessage()+
+                                        " OPID: "+response.getOpId()+
+                                        " TXNISOCODE: "+response.getTxnISOCode()+
+                                        " AUTH NUMBER: "+response.getAuthNumber()+
+                                        " TICKET: "+response.getTicketUrl()+
+                                        " MASKED PAN: "+response.getMaskedPAN());
+                                authorizationRepository.actualizatransaccion_billpocket(authorization.getIdTransaccion(),
+                                        response.getStatus(), response.getMessage(), response.getOpId(),
+                                        response.getAuthNumber(), response.getTxnISOCode(),
+                                        response.getTicketUrl(), response.getMaskedPAN());
+                                LOGGER.info("RESPUESTA DE ACTUALIZACION DE BD - {}", callTransaccion);
+                                actualizaTran = GSON.fromJson(callTransaccion, BaseResponse.class);
+                            } else {
+                                response.setCode(-50);
+                                response.setMessage("ERROR AL GUARDAR LA TRANSACION EN BD");
+                            }
                         } else {
-                            response.setCode(-50);
-                            response.setMessage("ERROR AL GUARDAR LA TRANSACION EN BD");
+                            response.setCode(enrollmentCard.getCode());
+                            response.setMessage(enrollmentCard.getMessage());
                         }
+                    } else {
+                        response.setCode(authorization.getCode());
+                        response.setMessage(authorization.getMessage());
                     }
                 }
                 LOGGER.info("RESPUESTA DE BILL POCKET . {}", GSON.toJson(response));

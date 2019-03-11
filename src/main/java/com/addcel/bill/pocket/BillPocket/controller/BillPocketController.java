@@ -76,10 +76,10 @@ public class BillPocketController {
     public ResponseEntity<Object> refundRequest(@PathVariable Integer idApp,
                                                 @PathVariable Integer idPais,
                                                 @PathVariable String idioma,
-                                                @RequestParam Integer opId) {
+                                                @RequestParam Integer idTransaccion) {
         ResponseEntity<Object> response = null;
         try {
-            response = new ResponseEntity<>(paymentService.refund(idApp, idPais, idioma, opId),
+            response = new ResponseEntity<>(paymentService.refund(idApp, idPais, idioma, idTransaccion),
                     HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

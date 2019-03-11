@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.addcel.bill.pocket.BillPocket.BillPocketApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 28.058 sec - in com.addcel.bill.pocket.BillPocket.BillPocketApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 31.086 sec - in com.addcel.bill.pocket.BillPocket.BillPocketApplicationTests

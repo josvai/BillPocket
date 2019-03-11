@@ -3,7 +3,7 @@ package com.addcel.bill.pocket.BillPocket.bean;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties
-public class Authorization {
+public class Authorization extends BaseResponse{
 
     private String apiKey;
 

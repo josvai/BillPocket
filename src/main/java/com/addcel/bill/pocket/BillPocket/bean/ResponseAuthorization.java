@@ -18,6 +18,8 @@ public class ResponseAuthorization extends BaseResponse{
 
     private long dateTime;
 
+    private long idTransaccion;
+
     public Integer getStatus() {
         return status;
     }
@@ -80,5 +82,13 @@ public class ResponseAuthorization extends BaseResponse{
 
     public void setDateTime(long dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public long getIdTransaccion() {
+        return idTransaccion;
+    }
+
+    public void setIdTransaccion(long idTransaccion) {
+        this.idTransaccion = idTransaccion;
     }
 }

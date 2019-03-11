@@ -5,21 +5,12 @@ import com.addcel.utils.AddcelCrypto;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class BillPocketClientServiceImpl implements BillPocketClientService{
@@ -45,21 +36,21 @@ public class BillPocketClientServiceImpl implements BillPocketClientService{
             exp = AddcelCrypto.decryptTarjeta(expDate);
             exp = exp.replace("/", "");
             exp = exp.substring(2, exp.length())+exp.substring(0, 2);
-            LOGGER.info("FECHA VIGENCIA FORMATO BILL POCKET: "+exp);
             requestEnrollmenCard = new RequestEnrollmenCard();
             requestEnrollmenCard.setApiKey("y6cU_oNjQ0ZUlpNQNaYNmgAAEsyH-ivxXeARF0MZP7qQesYSAAANJw");
             requestEnrollmenCard.setPan(AddcelCrypto.decryptTarjeta(pan));
             requestEnrollmenCard.setExpDate(exp);
             requestEnrollmenCard.setCvv2(AddcelCrypto.decryptTarjeta(ct));
+            LOGGER.info("FECHA VIGENCIA FORMATO BILL POCKET: CARD: "+requestEnrollmenCard.getPan()
+                    +", EXP: "+requestEnrollmenCard.getExpDate()
+                    +", CT: "+requestEnrollmenCard.getCvv2());
             HttpEntity<RequestEnrollmenCard> request = new HttpEntity<>(requestEnrollmenCard, headers);
-
             ResponseEntity<ResponseEnrollmentCard> respEnrollCard = restTemplate.exchange("https://test.bpckt.com/scops/card",
                     HttpMethod.POST, request, ResponseEnrollmentCard.class);
             response = respEnrollCard.getBody();
             response.setMaskedPan(requestEnrollmenCard.getPan().substring(0, 6)+"********"
                     +requestEnrollmenCard.getPan().substring(requestEnrollmenCard.getPan().length()-4,
                     requestEnrollmenCard.getPan().length()));
-            LOGGER.info("Response bill pocket - {}", GSON.toJson(response));
         } catch (HttpClientErrorException e) {
             LOGGER.error("La solicitud contiene sintaxis incorrecta o no puede procesarse.", e);
             LOGGER.info("HTTP Status Code: " + e.getStatusCode());
@@ -71,7 +62,13 @@ public class BillPocketClientServiceImpl implements BillPocketClientService{
             LOGGER.info("HTTP Status Code: " + ex.getStatusCode());
             response.setCode(-1);
             response.setMessage(ex.getLocalizedMessage());
+        } catch (Exception ex) {
+            LOGGER.error("El servidor falló al completar una solicitud aparentemente válida.", ex);
+            LOGGER.info("HTTP Status Code: " + ex.getLocalizedMessage());
+            response.setCode(-1);
+            response.setMessage(ex.getLocalizedMessage());
         }
+        LOGGER.info("Response bill pocket - {}", GSON.toJson(response));
         return response;
     }
 
